@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout android:id="@+id/linear_container_button"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:background="#ffffff"
+                  android:layout_alignParentBottom="true">
+
+        <Button android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onButtonLeftClick"
+                android:text="@string/left"/>
+        <Button android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onButtonDownClick"
+                android:text="@string/down"/>
+        <Button android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onButtonRotateClick"
+                android:text="@string/rotate"/>
+        <Button android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onButtonRightClick"
+                android:text="@string/right"/>
+
+    </LinearLayout>
+    <com.alex.tetris.widget.GameBoardView
+            android:id="@+id/view_gameboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/linear_container_button"/>
+</RelativeLayout>
+

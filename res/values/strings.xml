@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">tetris</string>
+    <string name="app_name">Tetris</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="rotate">Rotate</string>
+    <string name="down">Down</string>
 </resources>
