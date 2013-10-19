@@ -29,19 +29,5 @@ public class GameBoardView extends View {
         super(context, attrs, defStyle);
     }
 
-    public void onButtonLeftClick(View view) {
 
-    }
-
-    public void onButtonRotateClick(View view) {
-
-    }
-
-    public void onButtonDownClick(View view) {
-
-    }
-
-    public void onButtonRightClick(View view) {
-
-    }
 }

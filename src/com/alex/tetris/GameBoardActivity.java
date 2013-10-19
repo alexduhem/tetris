@@ -2,6 +2,7 @@ package com.alex.tetris;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import com.alex.tetris.widget.GameBoardView;
 
 public class GameBoardActivity extends Activity {
@@ -17,5 +18,21 @@ public class GameBoardActivity extends Activity {
 
     private void init() {
         gameBoardView = (GameBoardView) findViewById(R.id.view_gameboard);
+    }
+
+    public void onButtonLeftClick(View view) {
+
+    }
+
+    public void onButtonRotateClick(View view) {
+
+    }
+
+    public void onButtonDownClick(View view) {
+
+    }
+
+    public void onButtonRightClick(View view) {
+
     }
 }
