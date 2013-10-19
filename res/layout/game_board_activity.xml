@@ -37,6 +37,7 @@
             android:id="@+id/view_gameboard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/linear_container_button"/>
+            android:layout_above="@id/linear_container_button"
+            android:background="#000000"/>
 </RelativeLayout>
 
