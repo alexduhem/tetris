@@ -54,4 +54,7 @@ public class Piece {
         }
     }
 
+    public int[][] getCoordinates() {
+        return coordinates;
+    }
 }

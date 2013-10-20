@@ -3,10 +3,16 @@ package com.alex.tetris.widget;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import com.alex.tetris.model.Piece;
 import com.alex.tetris.util.Keys;
+
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,6 +35,12 @@ public class GameBoardView extends View {
 
     private Context context;
 
+    private Piece currentPiece;
+
+    ArrayList<Piece> pieces;
+
+    Paint paint = new Paint();
+
     public GameBoardView(Context context) {
         this(context, null);
     }
@@ -40,6 +52,8 @@ public class GameBoardView extends View {
     public GameBoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
+        currentPiece = new Piece(Piece.SHAPE_L);
+        paint.setColor(Color.RED);
     }
 
     @Override
@@ -54,5 +68,17 @@ public class GameBoardView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+            canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
+        }
+
+    }
+
+    private Rect getRectForCoordinate(int[] coordinatesInGameBoard) {
+        int x = coordinatesInGameBoard[0];
+        int y = coordinatesInGameBoard[1];
+        int left = x * widthBox;
+        int bottom = y * widthBox;
+        return new Rect(left, bottom + widthBox, left + widthBox, bottom);
     }
 }
