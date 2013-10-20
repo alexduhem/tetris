@@ -25,11 +25,11 @@ public class GameBoardActivity extends Activity {
     }
 
     public void onButtonRotateClick(View view) {
-
+          gameBoardView.rotate();
     }
 
     public void onButtonDownClick(View view) {
-
+         gameBoardView.translateDown();
     }
 
     public void onButtonRightClick(View view) {

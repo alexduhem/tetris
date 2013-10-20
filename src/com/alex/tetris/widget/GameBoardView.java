@@ -53,7 +53,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public GameBoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
-        currentPiece = new Piece(Piece.SHAPE_L);
+        currentPiece = new Piece(Piece.SHAPE_I);
         setOnTouchListener(this);
     }
 
@@ -92,6 +92,19 @@ public class GameBoardView extends View implements View.OnTouchListener {
         return false;
     }
 
+    public boolean translationDownIsAllowed() {
+        if (currentPiece != null) {
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                int y = currentPiece.getCoordinates()[i][1];
+                if (y == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean translationRightIsAllowed() {
         if (currentPiece != null) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
@@ -118,6 +131,15 @@ public class GameBoardView extends View implements View.OnTouchListener {
         return false;
     }
 
+    public void translateDown() {
+        if (translationDownIsAllowed()) {
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                currentPiece.getCoordinates()[i][1]--;
+            }
+            invalidate();
+        }
+    }
+
     public void translateRight() {
         if (translationRightIsAllowed()) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
@@ -127,13 +149,31 @@ public class GameBoardView extends View implements View.OnTouchListener {
         }
     }
 
-
     public void translateLeft() {
         if (translationLeftIsAllowed()) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
                 currentPiece.getCoordinates()[i][0]--;
             }
             invalidate();
+        }
+    }
+
+    public void rotate() {
+        if (currentPiece != null && currentPiece.getShape() != Piece.SHAPE_O) {
+            int[][] newCoordinates = currentPiece.getCoordinatesAfterRotation();
+            boolean rotationEnabled = true;
+            for (int i = 0; i < newCoordinates.length; i++) {
+                if (newCoordinates[i][0] >= gameBoardLength ||
+                        newCoordinates[i][0] < 0 ||
+                        newCoordinates[i][1] < 0) {
+                    rotationEnabled = false;
+                    break;
+                }
+            }
+            if (rotationEnabled) {
+                currentPiece.setCoordinates(newCoordinates);
+                invalidate();
+            }
         }
     }
 }
