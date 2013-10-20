@@ -20,17 +20,17 @@ public class Piece {
     public static final int SHAPE_T = 6;
     public static final int NUMBER_OF_SHAPE = 7;
 
-    private int[][] coordinates;
+    private Coordinate[] coordinates;
     private int shape;
 
-    private static final int[][] COORD_0 = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
-    private static final int[][] COORD_I = {{0, 0}, {0, 1}, {0, 2}, {0, 3}};
-    private static final int[][] COORD_S = {{0, 0}, {1, 0}, {1, 1}, {2, 1}};
-    private static final int[][] COORD_Z = {{0, 1}, {1, 1}, {1, 0}, {2, 0}};
-    private static final int[][] COORD_L = {{0, 2}, {0, 1}, {0, 0}, {1, 0}};
-    private static final int[][] COORD_J = {{0, 0}, {1, 0}, {1, 1}, {1, 2}};
-    private static final int[][] COORD_T = {{0, 0}, {1, 0}, {2, 0}, {1, 1}};
-    private static final int[][] COORD_NO_SHAPE = {{0, 0}};
+    private static final Coordinate[] COORD_0 = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(0, 1)};
+    private static final Coordinate[] COORD_I = {new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2), new Coordinate(0, 3)};
+    private static final Coordinate[] COORD_S = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)};
+    private static final Coordinate[] COORD_Z = {new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 0), new Coordinate(2, 0)};
+    private static final Coordinate[] COORD_L = {new Coordinate(0, 2), new Coordinate(0, 1), new Coordinate(0, 0), new Coordinate(1, 0)};
+    private static final Coordinate[] COORD_J = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(1, 2)};
+    private static final Coordinate[] COORD_T = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(1, 1)};
+    private static final Coordinate[] COORD_NO_SHAPE = {new Coordinate(0, 0)};
 
 
     public Piece(int shape) {
@@ -112,32 +112,31 @@ public class Piece {
      * @param coordinate
      */
     public void translate(Coordinate coordinate){
-        int[] centerCoordinatesForRotation = coordinates[getRotationCoordinateIndex()];
-        int distanceX = coordinate.x - centerCoordinatesForRotation[0]  ;
-        int distanceY = coordinate.y - centerCoordinatesForRotation[1]  ;
+        Coordinate centerCoordinatesForRotation = coordinates[getRotationCoordinateIndex()];
+        int distanceX = coordinate.x - centerCoordinatesForRotation.x  ;
+        int distanceY = coordinate.y - centerCoordinatesForRotation.y  ;
          for (int i = 0; i<coordinates.length; i++){
-             coordinates[i][0] =  coordinates[i][0] + distanceX;
-             coordinates[i][1] =  coordinates[i][1] + distanceY;
+             coordinates[i].x =  coordinates[i].x + distanceX;
+             coordinates[i].y =  coordinates[i].y + distanceY;
         }
     }
 
-    public int[][] getCoordinatesAfterRotation() {
-        int[][] coordinatesToReturn = new int[coordinates.length][2];
-        int[] centerCoordinatesForRotation = coordinates[getRotationCoordinateIndex()];
+    public Coordinate[] getCoordinatesAfterRotation() {
+        Coordinate[] coordinatesToReturn = new Coordinate[coordinates.length];
+        Coordinate centerCoordinatesForRotation = coordinates[getRotationCoordinateIndex()];
         for (int i = 0; i < coordinates.length; i++) {
-            int newX = coordinates[i][0] - centerCoordinatesForRotation[0];
-            int newY = coordinates[i][1] - centerCoordinatesForRotation[1];
-            coordinatesToReturn[i][0] = newY + centerCoordinatesForRotation[0];
-            coordinatesToReturn[i][1] = -newX + centerCoordinatesForRotation[1];
+            int newX = coordinates[i].x - centerCoordinatesForRotation.x;
+            int newY = coordinates[i].y - centerCoordinatesForRotation.y;
+            coordinatesToReturn[i] = new Coordinate(newY + centerCoordinatesForRotation.x, -newX + centerCoordinatesForRotation.y) ;
         }
         return coordinatesToReturn;
     }
 
-    public int[][] getCoordinates() {
+    public Coordinate[] getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(int[][] coordinates) {
+    public void setCoordinates(Coordinate[] coordinates) {
         this.coordinates = coordinates;
     }
 

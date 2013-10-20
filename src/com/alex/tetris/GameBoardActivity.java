@@ -53,6 +53,7 @@ public class GameBoardActivity extends Activity {
             buttonPause.setText(getString(R.string.pause));
         } else {
             timer.cancel();
+            timer = null;
             buttonPause.setText(getString(R.string.start));
         }
         pause = !pause;

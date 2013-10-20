@@ -72,19 +72,25 @@ public class GameBoardView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (currentPiece != null){
+        if (currentPiece != null) {
             paint.setColor(currentPiece.getColor());
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
                 canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
             }
         }
+        for (Piece piece : pieces) {
+            paint.setColor(piece.getColor());
+            for (int i = 0; i < piece.getCoordinates().length; i++) {
+                canvas.drawRect(getRectForCoordinate(piece.getCoordinates()[i]), paint);
+            }
+        }
     }
 
-    private Rect getRectForCoordinate(int[] coordinatesInGameBoard) {
-        int x = coordinatesInGameBoard[0];
+    private Rect getRectForCoordinate(Coordinate coordinatesInGameBoard) {
+        int x = coordinatesInGameBoard.x;
         //the origin of the plan is at the top left, to simulate a plan
         //with a bottom left origin (easier to imagine), with do the following operation to y
-        int y = -coordinatesInGameBoard[1] + gameBoardHeight;
+        int y = -coordinatesInGameBoard.y + gameBoardHeight;
         int left = x * boxSize + (sideMargin / 2);
         int bottom = y * boxSize;
         return new Rect(left, bottom - boxSize, left + boxSize, bottom);
@@ -98,7 +104,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public boolean translationDownIsAllowed() {
         if (currentPiece != null) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                int y = currentPiece.getCoordinates()[i][1];
+                int y = currentPiece.getCoordinates()[i].y;
                 if (y == 0) {
                     return false;
                 }
@@ -111,7 +117,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public boolean translationRightIsAllowed() {
         if (currentPiece != null) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                int x = currentPiece.getCoordinates()[i][0];
+                int x = currentPiece.getCoordinates()[i].x;
                 if (x == gameBoardLength - 1) {
                     return false;
                 }
@@ -124,7 +130,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public boolean translationLeftIsAllowed() {
         if (currentPiece != null) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                int x = currentPiece.getCoordinates()[i][0];
+                int x = currentPiece.getCoordinates()[i].x;
                 if (x == 0) {
                     return false;
                 }
@@ -137,7 +143,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public boolean translateDown() {
         if (translationDownIsAllowed()) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                currentPiece.getCoordinates()[i][1]--;
+                currentPiece.getCoordinates()[i].y--;
             }
             invalidate();
             return true;
@@ -148,7 +154,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public void translateRight() {
         if (translationRightIsAllowed()) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                currentPiece.getCoordinates()[i][0]++;
+                currentPiece.getCoordinates()[i].x++;
             }
             invalidate();
         }
@@ -157,7 +163,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public void translateLeft() {
         if (translationLeftIsAllowed()) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                currentPiece.getCoordinates()[i][0]--;
+                currentPiece.getCoordinates()[i].x--;
             }
             invalidate();
         }
@@ -165,12 +171,12 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     public void rotate() {
         if (currentPiece != null && currentPiece.getShape() != Piece.SHAPE_O) {
-            int[][] newCoordinates = currentPiece.getCoordinatesAfterRotation();
+            Coordinate[] newCoordinates = currentPiece.getCoordinatesAfterRotation();
             boolean rotationEnabled = true;
             for (int i = 0; i < newCoordinates.length; i++) {
-                if (newCoordinates[i][0] >= gameBoardLength ||
-                        newCoordinates[i][0] < 0 ||
-                        newCoordinates[i][1] < 0) {
+                if (newCoordinates[i].x >= gameBoardLength ||
+                        newCoordinates[i].x < 0 ||
+                        newCoordinates[i].y < 0) {
                     rotationEnabled = false;
                     break;
                 }
@@ -182,17 +188,21 @@ public class GameBoardView extends View implements View.OnTouchListener {
         }
     }
 
+    private void addNewPiece() {
+        Random random = new Random();
+        int shape = random.nextInt(Piece.NUMBER_OF_SHAPE - 1);
+        currentPiece = new Piece(shape);
+        currentPiece.translate(new Coordinate(DEFAULT_BOARD_LENGTH / 2, DEFAULT_BOARD_HEIGHT));
+        invalidate();
+    }
+
     public void performAction() {
         if (currentPiece == null) {
-            Random random = new Random();
-            int shape = random.nextInt(Piece.NUMBER_OF_SHAPE - 1);
-            currentPiece = new Piece(shape);
-            currentPiece.translate(new Coordinate(DEFAULT_BOARD_LENGTH/2, DEFAULT_BOARD_HEIGHT));
-            invalidate();
+              addNewPiece();
         } else {
             if (!translateDown()) {
                 pieces.add(currentPiece);
-                 currentPiece = null;
+                currentPiece = null;
             }
         }
     }
