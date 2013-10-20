@@ -21,7 +21,7 @@ public class GameBoardActivity extends Activity {
     }
 
     public void onButtonLeftClick(View view) {
-
+        gameBoardView.translateLeft();
     }
 
     public void onButtonRotateClick(View view) {
@@ -33,6 +33,6 @@ public class GameBoardActivity extends Activity {
     }
 
     public void onButtonRightClick(View view) {
-
+        gameBoardView.translateRight();
     }
 }

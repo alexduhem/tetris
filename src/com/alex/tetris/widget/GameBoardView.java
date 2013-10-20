@@ -64,7 +64,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
         gameBoardLength = pref.getInt(Keys.PREF_KEY_GAMEBOARD_LENGTH, DEFAULT_BOARD_LENGTH);
         gameBoardHeight = pref.getInt(Keys.PREF_KEY_GAMEBOARD_HEIGHT, DEFAULT_BOARD_HEIGHT);
         boxSize = height / gameBoardHeight;
-        sideMargin = width - gameBoardLength* boxSize;
+        sideMargin = width - gameBoardLength * boxSize;
     }
 
     @Override
@@ -81,8 +81,8 @@ public class GameBoardView extends View implements View.OnTouchListener {
         int x = coordinatesInGameBoard[0];
         //the origin of the plan is at the top left, to simulate a plan
         //with a bottom left origin (easier to imagine), with do the following operation to y
-        int y = -coordinatesInGameBoard[1] +gameBoardHeight;
-        int left = x * boxSize + (sideMargin/2);
+        int y = -coordinatesInGameBoard[1] + gameBoardHeight;
+        int left = x * boxSize + (sideMargin / 2);
         int bottom = y * boxSize;
         return new Rect(left, bottom - boxSize, left + boxSize, bottom);
     }
@@ -90,5 +90,50 @@ public class GameBoardView extends View implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         return false;
+    }
+
+    public boolean translationRightIsAllowed() {
+        if (currentPiece != null) {
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                int x = currentPiece.getCoordinates()[i][0];
+                if (x == gameBoardLength - 1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean translationLeftIsAllowed() {
+        if (currentPiece != null) {
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                int x = currentPiece.getCoordinates()[i][0];
+                if (x == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void translateRight() {
+        if (translationRightIsAllowed()) {
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                currentPiece.getCoordinates()[i][0]++;
+            }
+            invalidate();
+        }
+    }
+
+
+    public void translateLeft() {
+        if (translationLeftIsAllowed()) {
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                currentPiece.getCoordinates()[i][0]--;
+            }
+            invalidate();
+        }
     }
 }
