@@ -8,10 +8,12 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import com.alex.tetris.model.Coordinate;
 import com.alex.tetris.model.Piece;
 import com.alex.tetris.util.Keys;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,8 +55,8 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public GameBoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
-        currentPiece = new Piece(Piece.SHAPE_I);
         setOnTouchListener(this);
+        pieces = new ArrayList<Piece>();
     }
 
     @Override
@@ -70,11 +72,12 @@ public class GameBoardView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        paint.setColor(currentPiece.getColor());
-        for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-            canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
+        if (currentPiece != null){
+            paint.setColor(currentPiece.getColor());
+            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
+            }
         }
-
     }
 
     private Rect getRectForCoordinate(int[] coordinatesInGameBoard) {
@@ -131,13 +134,15 @@ public class GameBoardView extends View implements View.OnTouchListener {
         return false;
     }
 
-    public void translateDown() {
+    public boolean translateDown() {
         if (translationDownIsAllowed()) {
             for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
                 currentPiece.getCoordinates()[i][1]--;
             }
             invalidate();
+            return true;
         }
+        return false;
     }
 
     public void translateRight() {
@@ -173,6 +178,21 @@ public class GameBoardView extends View implements View.OnTouchListener {
             if (rotationEnabled) {
                 currentPiece.setCoordinates(newCoordinates);
                 invalidate();
+            }
+        }
+    }
+
+    public void performAction() {
+        if (currentPiece == null) {
+            Random random = new Random();
+            int shape = random.nextInt(Piece.NUMBER_OF_SHAPE - 1);
+            currentPiece = new Piece(shape);
+            currentPiece.translate(new Coordinate(DEFAULT_BOARD_LENGTH/2, DEFAULT_BOARD_HEIGHT));
+            invalidate();
+        } else {
+            if (!translateDown()) {
+                pieces.add(currentPiece);
+                 currentPiece = null;
             }
         }
     }

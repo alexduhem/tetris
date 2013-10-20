@@ -18,6 +18,7 @@ public class Piece {
     public static final int SHAPE_L = 4;
     public static final int SHAPE_J = 5;
     public static final int SHAPE_T = 6;
+    public static final int NUMBER_OF_SHAPE = 7;
 
     private int[][] coordinates;
     private int shape;
@@ -102,6 +103,21 @@ public class Piece {
                 return 1;
             default:
                 return 0;
+        }
+    }
+
+
+    /**
+     * Translate the shape to the given coordinate (with the rotation center point)
+     * @param coordinate
+     */
+    public void translate(Coordinate coordinate){
+        int[] centerCoordinatesForRotation = coordinates[getRotationCoordinateIndex()];
+        int distanceX = coordinate.x - centerCoordinatesForRotation[0]  ;
+        int distanceY = coordinate.y - centerCoordinatesForRotation[1]  ;
+         for (int i = 0; i<coordinates.length; i++){
+             coordinates[i][0] =  coordinates[i][0] + distanceX;
+             coordinates[i][1] =  coordinates[i][1] + distanceY;
         }
     }
 

@@ -5,4 +5,6 @@
     <string name="right">Right</string>
     <string name="rotate">Rotate</string>
     <string name="down">Down</string>
+    <string name="pause">Pause</string>
+    <string name="start">Start</string>
 </resources>
