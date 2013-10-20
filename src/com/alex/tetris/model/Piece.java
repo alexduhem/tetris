@@ -1,5 +1,7 @@
 package com.alex.tetris.model;
 
+import android.graphics.Color;
+
 /**
  * Created with IntelliJ IDEA.
  * User: alexandreduhem
@@ -18,6 +20,7 @@ public class Piece {
     public static final int SHAPE_T = 6;
 
     private int[][] coordinates;
+    private int shape;
 
     private static final int[][] COORD_0 = {{0, 0},{1, 0},{1, 1},{0, 1}};
     private static final int[][] COORD_I = {{0, 0},{0, 1},{0, 2},{0, 3}};
@@ -26,9 +29,11 @@ public class Piece {
     private static final int[][] COORD_L = {{0, 2},{0, 1},{0, 0},{1, 0}};
     private static final int[][] COORD_J = {{0, 0},{1, 0},{1, 1},{1, 2}};
     private static final int[][] COORD_T = {{0, 0},{1, 0},{2, 0},{1, 1}};
+    private static final int[][] COORD_NO_SHAPE = {{0, 0}};
 
 
     public Piece(int shape){
+        this.shape = shape;
         switch (shape){
             case SHAPE_O:
                 coordinates = COORD_0;
@@ -51,6 +56,30 @@ public class Piece {
             case SHAPE_T:
                 coordinates = COORD_T;
                 break;
+            default:
+                coordinates = COORD_NO_SHAPE;
+                break;
+        }
+    }
+
+    public int getColor(){
+        switch (shape){
+            case SHAPE_O:
+                return Color.RED;
+            case SHAPE_I:
+                return Color.MAGENTA;
+            case SHAPE_S:
+                return Color.CYAN;
+            case SHAPE_Z:
+                return Color.GRAY;
+            case SHAPE_L:
+                return Color.BLUE;
+            case SHAPE_J:
+                return Color.GREEN;
+            case SHAPE_T:
+                return Color.YELLOW;
+            default:
+                return Color.BLACK;
         }
     }
 

@@ -3,7 +3,6 @@ package com.alex.tetris.widget;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
  * Time: 16:40
  * To change this template use File | Settings | File Templates.
  */
-public class GameBoardView extends View {
+public class GameBoardView extends View implements View.OnTouchListener {
 
     private static final int DEFAULT_BOARD_HEIGHT = 18;
     private static final int DEFAULT_BOARD_LENGTH = 10;
@@ -31,7 +30,7 @@ public class GameBoardView extends View {
     //ordonnée maximale
     private int gameBoardHeight;
     //taille en pixel d'une case
-    private int widthBox;
+    private int boxSize;
 
     private Context context;
 
@@ -40,6 +39,8 @@ public class GameBoardView extends View {
     ArrayList<Piece> pieces;
 
     Paint paint = new Paint();
+
+    int sideMargin;
 
     public GameBoardView(Context context) {
         this(context, null);
@@ -53,21 +54,23 @@ public class GameBoardView extends View {
         super(context, attrs, defStyle);
         this.context = context;
         currentPiece = new Piece(Piece.SHAPE_L);
-        paint.setColor(Color.RED);
+        setOnTouchListener(this);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
+    protected void onSizeChanged(int width, int height, int oldw, int oldh) {
+        super.onSizeChanged(width, height, oldw, oldh);
         SharedPreferences pref = context.getSharedPreferences(Keys.PREF_KEY_GENERAL, Context.MODE_PRIVATE);
         gameBoardLength = pref.getInt(Keys.PREF_KEY_GAMEBOARD_LENGTH, DEFAULT_BOARD_LENGTH);
         gameBoardHeight = pref.getInt(Keys.PREF_KEY_GAMEBOARD_HEIGHT, DEFAULT_BOARD_HEIGHT);
-        widthBox = w / gameBoardLength;
+        boxSize = height / gameBoardHeight;
+        sideMargin = width - gameBoardLength* boxSize;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        paint.setColor(currentPiece.getColor());
         for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
             canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
         }
@@ -76,9 +79,16 @@ public class GameBoardView extends View {
 
     private Rect getRectForCoordinate(int[] coordinatesInGameBoard) {
         int x = coordinatesInGameBoard[0];
-        int y = coordinatesInGameBoard[1];
-        int left = x * widthBox;
-        int bottom = y * widthBox;
-        return new Rect(left, bottom + widthBox, left + widthBox, bottom);
+        //the origin of the plan is at the top left, to simulate a plan
+        //with a bottom left origin (easier to imagine), with do the following operation to y
+        int y = -coordinatesInGameBoard[1] +gameBoardHeight;
+        int left = x * boxSize + (sideMargin/2);
+        int bottom = y * boxSize;
+        return new Rect(left, bottom - boxSize, left + boxSize, bottom);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
     }
 }
