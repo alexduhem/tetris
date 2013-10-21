@@ -8,12 +8,14 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import com.alex.tetris.model.Coordinate;
 import com.alex.tetris.model.Line;
 import com.alex.tetris.model.Piece;
 import com.alex.tetris.util.Keys;
+import com.alex.tetris.util.Params;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -25,7 +27,8 @@ import java.util.Random;
  * Time: 16:40
  * To change this template use File | Settings | File Templates.
  */
-public class GameBoardView extends View implements View.OnTouchListener {
+public class GameBoardView extends View {
+
 
     public interface Listener{
         public void onGameOver();
@@ -33,8 +36,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     private Listener listener;
 
-    private static final int DEFAULT_BOARD_HEIGHT = 18;
-    private static final int DEFAULT_BOARD_LENGTH = 10;
+
 
     //abcsisse maximale
     private int gameBoardLength;
@@ -53,6 +55,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     ArrayList<Coordinate> usedCoordinates;
 
+    GestureDetector gestureDetector;
     private ArrayList<Line> lines;
 
     public GameBoardView(Context context) {
@@ -69,12 +72,14 @@ public class GameBoardView extends View implements View.OnTouchListener {
         init();
     }
 
+
+
     private void init() {
-        setOnTouchListener(this);
+        gestureDetector = new GestureDetector(context,  new GestureListener(this));
         usedCoordinates = new ArrayList<Coordinate>();
-        lines = new ArrayList<Line>(DEFAULT_BOARD_LENGTH);
-        for (int i = 0; i < DEFAULT_BOARD_HEIGHT; i++) {
-            lines.add(new Line(i, DEFAULT_BOARD_LENGTH));
+        lines = new ArrayList<Line>(Params.DEFAULT_BOARD_LENGTH);
+        for (int i = 0; i < Params.DEFAULT_BOARD_HEIGHT; i++) {
+            lines.add(new Line(i, Params.DEFAULT_BOARD_LENGTH));
         }
     }
 
@@ -82,10 +87,15 @@ public class GameBoardView extends View implements View.OnTouchListener {
     protected void onSizeChanged(int width, int height, int oldw, int oldh) {
         super.onSizeChanged(width, height, oldw, oldh);
         SharedPreferences pref = context.getSharedPreferences(Keys.PREF_KEY_GENERAL, Context.MODE_PRIVATE);
-        gameBoardLength = pref.getInt(Keys.PREF_KEY_GAMEBOARD_LENGTH, DEFAULT_BOARD_LENGTH);
-        gameBoardHeight = pref.getInt(Keys.PREF_KEY_GAMEBOARD_HEIGHT, DEFAULT_BOARD_HEIGHT);
+        gameBoardLength = pref.getInt(Keys.PREF_KEY_GAMEBOARD_LENGTH, Params.DEFAULT_BOARD_LENGTH);
+        gameBoardHeight = pref.getInt(Keys.PREF_KEY_GAMEBOARD_HEIGHT, Params.DEFAULT_BOARD_HEIGHT);
         boxSize = height / gameBoardHeight;
         sideMargin = width - gameBoardLength * boxSize;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
     }
 
     @Override
@@ -105,7 +115,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
     private void drawGameBoundaries(Canvas canvas) {
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(0);
-        canvas.drawRect(sideMargin / 2, 0, getWidth() - sideMargin / 2, DEFAULT_BOARD_HEIGHT * boxSize, paint);
+        canvas.drawRect(sideMargin / 2, 0, getWidth() - sideMargin / 2, Params.DEFAULT_BOARD_HEIGHT * boxSize, paint);
     }
 
     private void drawBox(Canvas canvas, Coordinate coordinate) {
@@ -126,11 +136,6 @@ public class GameBoardView extends View implements View.OnTouchListener {
         int left = x * boxSize + (sideMargin / 2);
         int bottom = y * boxSize;
         return new Rect(left, bottom - boxSize, left + boxSize, bottom);
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
     }
 
 
@@ -234,7 +239,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
         Random random = new Random();
         int shape = random.nextInt(Piece.NUMBER_OF_SHAPE);
         currentPiece = new Piece(shape);
-        currentPiece.translate(new Coordinate(DEFAULT_BOARD_LENGTH / 2, DEFAULT_BOARD_HEIGHT));
+        currentPiece.translate(new Coordinate(Params.DEFAULT_BOARD_LENGTH / 2, Params.DEFAULT_BOARD_HEIGHT));
         invalidate();
     }
 
@@ -244,7 +249,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
         } else {
             if (!translateDown()) {
                 for (Coordinate coordinate : currentPiece.getCoordinates()) {
-                    if (coordinate.y >= DEFAULT_BOARD_HEIGHT) {
+                    if (coordinate.y >= Params.DEFAULT_BOARD_HEIGHT) {
                         //player is dead
                         gameOver();
                         return;
@@ -264,6 +269,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
             if (line.isFull()) {
                 usedCoordinates.removeAll(line.getCoordinates());
                 line.getCoordinates().clear();
+                //we move down all the coordinates above the full line
                 for (int j = i; j < lines.size(); j++) {
                     Line lineToFill = lines.get(j);
                     if (j < lines.size() - 1) {
@@ -272,6 +278,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
                 }
                 i--;
             } else if (line.isEmpty()) {
+                //if a line is empty, the rest of the lines are empty too, so unless to check them
                 break;
             }
         }
@@ -298,5 +305,9 @@ public class GameBoardView extends View implements View.OnTouchListener {
         for (Line line : lines){
             line.getCoordinates().clear();
         }
+    }
+
+    public int getBoxSize() {
+        return boxSize;
     }
 }

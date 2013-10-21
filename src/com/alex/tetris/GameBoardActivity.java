@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import com.alex.tetris.util.Params;
 import com.alex.tetris.widget.GameBoardView;
 
 import java.util.Timer;
@@ -17,7 +18,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
     Button buttonPause;
     View viewGameOverContainer;
 
-    private static final int DEFAULT_SPEED = 400;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,17 +61,17 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
 
     public void onButtonRestartClick(View view) {
         gameBoardView.clear();
-        start(DEFAULT_SPEED);
+        start(Params.DEFAULT_SPEED);
         viewGameOverContainer.setVisibility(View.GONE);
     }
 
     public void onButtonStartClick(View view) {
         if (pause) {
-            start(DEFAULT_SPEED);
+            start(Params.DEFAULT_SPEED);
         } else {
             pause();
         }
-        pause = !pause;
+
     }
 
     @Override
@@ -85,6 +86,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
             timer = null;
             buttonPause.setText(getString(R.string.start));
         }
+        pause = true;
     }
 
     private void start(int speed) {
@@ -103,6 +105,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
                 });
             }
         }, 0, speed);
+        pause = false;
     }
 
     @Override
