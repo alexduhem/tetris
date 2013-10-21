@@ -16,7 +16,7 @@ public class GameBoardActivity extends Activity {
     Timer timer;
     Button buttonPause;
 
-    private static final int DEFAULT_SPEED = 600;
+    private static final int DEFAULT_SPEED = 400;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

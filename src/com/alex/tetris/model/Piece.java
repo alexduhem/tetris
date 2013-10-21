@@ -138,6 +138,9 @@ public class Piece {
 
     public void setCoordinates(Coordinate[] coordinates) {
         this.coordinates = coordinates;
+        for(Coordinate c : this.coordinates){
+            c.setColor(getColor());
+        }
     }
 
     public int getShape() {

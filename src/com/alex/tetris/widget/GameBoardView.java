@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import com.alex.tetris.model.Coordinate;
+import com.alex.tetris.model.Line;
 import com.alex.tetris.model.Piece;
 import com.alex.tetris.util.Keys;
 
@@ -46,6 +47,8 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     ArrayList<Coordinate> usedCoordinates;
 
+    private ArrayList<Line> lines;
+
     public GameBoardView(Context context) {
         this(context, null);
     }
@@ -57,9 +60,16 @@ public class GameBoardView extends View implements View.OnTouchListener {
     public GameBoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
+        init();
+    }
+
+    private void init() {
         setOnTouchListener(this);
         usedCoordinates = new ArrayList<Coordinate>();
-
+        lines = new ArrayList<Line>(DEFAULT_BOARD_LENGTH);
+        for (int i = 0; i < DEFAULT_BOARD_HEIGHT; i++) {
+            lines.add(new Line(i, DEFAULT_BOARD_LENGTH));
+        }
     }
 
     @Override
@@ -86,20 +96,20 @@ public class GameBoardView extends View implements View.OnTouchListener {
         }
     }
 
-    private void drawGameBoundaries(Canvas canvas){
+    private void drawGameBoundaries(Canvas canvas) {
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(0);
-        canvas.drawRect(sideMargin/2, 0, getWidth()-sideMargin/2, DEFAULT_BOARD_HEIGHT*boxSize, paint);
+        canvas.drawRect(sideMargin / 2, 0, getWidth() - sideMargin / 2, DEFAULT_BOARD_HEIGHT * boxSize, paint);
     }
 
-    private void drawBox(Canvas canvas, Coordinate coordinate){
+    private void drawBox(Canvas canvas, Coordinate coordinate) {
         Rect rect = getRectForCoordinate(coordinate);
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(1);
         canvas.drawRect(rect, paint);
         paint.setStrokeWidth(0);
         paint.setColor(coordinate.getColor());
-        canvas.drawRect(rect.left+1, rect.top+1, rect.right-1, rect.bottom-1,  paint);
+        canvas.drawRect(rect.left + 1, rect.top + 1, rect.right - 1, rect.bottom - 1, paint);
     }
 
     private Rect getRectForCoordinate(Coordinate coordinatesInGameBoard) {
@@ -125,7 +135,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
                     return false;
                 }
                 for (Coordinate existCoord : usedCoordinates) {
-                    if (existCoord.x == coord.x+1 && existCoord.y == coord.y){
+                    if (existCoord.x == coord.x + 1 && existCoord.y == coord.y) {
                         return false;
                     }
                 }
@@ -142,7 +152,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
                     return false;
                 }
                 for (Coordinate existCoord : usedCoordinates) {
-                    if (existCoord.x == coord.x-1 && existCoord.y == coord.y){
+                    if (existCoord.x == coord.x - 1 && existCoord.y == coord.y) {
                         return false;
                     }
                 }
@@ -156,7 +166,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
         if (currentPiece != null && !currentPiece.isOnTheBottom()) {
             for (Coordinate coord : currentPiece.getCoordinates()) {
                 for (Coordinate existCoord : usedCoordinates) {
-                    if (existCoord.x == coord.x && existCoord.y == coord.y - 1){
+                    if (existCoord.x == coord.x && existCoord.y == coord.y - 1) {
                         return false;
                     }
                 }
@@ -216,7 +226,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     private void addNewPiece() {
         Random random = new Random();
-        int shape = random.nextInt(Piece.NUMBER_OF_SHAPE - 1);
+        int shape = random.nextInt(Piece.NUMBER_OF_SHAPE);
         currentPiece = new Piece(shape);
         currentPiece.translate(new Coordinate(DEFAULT_BOARD_LENGTH / 2, DEFAULT_BOARD_HEIGHT));
         invalidate();
@@ -227,15 +237,36 @@ public class GameBoardView extends View implements View.OnTouchListener {
             addNewPiece();
         } else {
             if (!translateDown()) {
-                for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                    usedCoordinates.add(currentPiece.getCoordinates()[i]);
+                for (Coordinate coordinate : currentPiece.getCoordinates()) {
+                    usedCoordinates.add(coordinate);
+                    lines.get(coordinate.y).addCoordinate(coordinate);
                 }
                 currentPiece = null;
+                removeCompleteLines();
             }
         }
     }
 
-    private void removeCompleteLines(){
-
+    private void removeCompleteLines() {
+        for (int i = 0; i < lines.size(); i++) {
+            Line line = lines.get(i);
+            Log.e("line", "line "+i+" has "+line.getCoordinates().size());
+            if (line.isFull()) {
+                Log.e("line", "line is full "+i);
+                usedCoordinates.removeAll(line.getCoordinates());
+                line.getCoordinates().clear();
+                for (int j = i; j<lines.size(); j++){
+                    Line lineToFill = lines.get(j);
+                    if (j < lines.size()-1){
+                        lineToFill.setCoordinates(lines.get(j+1).getCoordinates());
+                    }
+                }
+                i--;
+            } else if (line.isEmpty()){
+                Log.e("line", "line is empty "+i);
+                break;
+            }
+        }
+        invalidate();
     }
 }
