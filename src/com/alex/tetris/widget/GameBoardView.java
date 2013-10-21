@@ -233,6 +233,13 @@ public class GameBoardView extends View {
                     rotationEnabled = false;
                     break;
                 }
+                for (Coordinate fixedCoordinate : usedCoordinates){
+                    if (newCoordinates[i].x == fixedCoordinate.x &&
+                            newCoordinates[i].y == fixedCoordinate.y){
+                        rotationEnabled = false;
+                        break;
+                    }
+                }
             }
             if (rotationEnabled) {
                 currentPiece.setCoordinates(newCoordinates);
