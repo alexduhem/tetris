@@ -12,26 +12,21 @@
                   android:background="#ffffff"
                   android:layout_alignParentBottom="true">
 
-        <Button android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onButtonLeftClick"
-                android:text="@string/left"/>
-        <Button android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onButtonDownClick"
-                android:text="@string/down"/>
-        <Button android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onButtonRotateClick"
-                android:text="@string/rotate"/>
-        <Button android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onButtonRightClick"
-                android:text="@string/right"/>
+        <ImageButton style="@style/ButtonControl"
+                     android:onClick="onButtonLeftClick"
+                     android:src="@drawable/arrow_left"
+                />
+        <ImageButton style="@style/ButtonControl"
+                     android:onClick="onButtonDownClick"
+                     android:src="@drawable/arrow_down"/>
+        <ImageButton style="@style/ButtonControl"
+                     android:onClick="onButtonRotateClick"
+                     android:src="@drawable/rotate"/>
+        />
+        <ImageButton style="@style/ButtonControl"
+                     android:onClick="onButtonRightClick"
+                     android:src="@drawable/arrow_right"
+                />
 
     </LinearLayout>
     <com.alex.tetris.widget.GameBoardView
@@ -40,12 +35,14 @@
             android:layout_height="match_parent"
             android:layout_above="@id/linear_container_button"
             />
-    <Button android:id="@+id/button_start_pause"
-            android:text="@string/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:onClick="onButtonStartClick"/>
+    <ImageButton android:id="@+id/button_start_pause"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentRight="true"
+                 android:onClick="onButtonStartClick"
+                 android:src="@drawable/play"
+                 android:background="@android:color/transparent"
+                 android:layout_margin="5dip"/>
     <RelativeLayout android:id="@+id/gameover_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

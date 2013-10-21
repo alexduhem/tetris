@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import com.alex.tetris.util.Params;
 import com.alex.tetris.widget.GameBoardView;
 
@@ -15,7 +16,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
     private GameBoardView gameBoardView;
     boolean pause;
     Timer timer;
-    Button buttonPause;
+    ImageButton buttonPause;
     View viewGameOverContainer;
 
 
@@ -29,7 +30,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
 
     private void init() {
         gameBoardView = (GameBoardView) findViewById(R.id.view_gameboard);
-        buttonPause = (Button) findViewById(R.id.button_start_pause);
+        buttonPause = (ImageButton) findViewById(R.id.button_start_pause);
         pause = true;
         gameBoardView.setListener(this);
         viewGameOverContainer = findViewById(R.id.gameover_container);
@@ -84,14 +85,14 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
         if (!pause) {
             timer.cancel();
             timer = null;
-            buttonPause.setText(getString(R.string.start));
+            buttonPause.setImageResource(R.drawable.play);
             gameBoardView.setTouchable(false);
         }
         pause = true;
     }
 
     private void start(int speed) {
-        buttonPause.setText(getString(R.string.pause));
+        buttonPause.setImageResource(R.drawable.pause);
         if (timer == null) {
             timer = new Timer("tetrisTimer", false);
         }
