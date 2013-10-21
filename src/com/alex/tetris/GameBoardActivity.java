@@ -9,12 +9,13 @@ import com.alex.tetris.widget.GameBoardView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameBoardActivity extends Activity {
+public class GameBoardActivity extends Activity implements GameBoardView.Listener {
 
     private GameBoardView gameBoardView;
     boolean pause;
     Timer timer;
     Button buttonPause;
+    View viewGameOverContainer;
 
     private static final int DEFAULT_SPEED = 400;
 
@@ -29,28 +30,43 @@ public class GameBoardActivity extends Activity {
         gameBoardView = (GameBoardView) findViewById(R.id.view_gameboard);
         buttonPause = (Button) findViewById(R.id.button_start_pause);
         pause = true;
+        gameBoardView.setListener(this);
+        viewGameOverContainer = findViewById(R.id.gameover_container);
     }
 
     public void onButtonLeftClick(View view) {
-        gameBoardView.translateLeft();
+        if (!pause) {
+            gameBoardView.translateLeft();
+        }
     }
 
     public void onButtonRotateClick(View view) {
-        gameBoardView.rotate();
+        if (!pause) {
+            gameBoardView.rotate();
+        }
     }
 
     public void onButtonDownClick(View view) {
-        gameBoardView.translateDown();
+        if (!pause) {
+            gameBoardView.translateDown();
+        }
     }
 
     public void onButtonRightClick(View view) {
-        gameBoardView.translateRight();
+        if (!pause) {
+            gameBoardView.translateRight();
+        }
+    }
+
+    public void onButtonRestartClick(View view) {
+        gameBoardView.clear();
+        start(DEFAULT_SPEED);
+        viewGameOverContainer.setVisibility(View.GONE);
     }
 
     public void onButtonStartClick(View view) {
         if (pause) {
             start(DEFAULT_SPEED);
-
         } else {
             pause();
         }
@@ -87,6 +103,12 @@ public class GameBoardActivity extends Activity {
                 });
             }
         }, 0, speed);
+    }
+
+    @Override
+    public void onGameOver() {
+        pause();
+        viewGameOverContainer.setVisibility(View.VISIBLE);
     }
 }
 

@@ -27,6 +27,12 @@ import java.util.Random;
  */
 public class GameBoardView extends View implements View.OnTouchListener {
 
+    public interface Listener{
+        public void onGameOver();
+    }
+
+    private Listener listener;
+
     private static final int DEFAULT_BOARD_HEIGHT = 18;
     private static final int DEFAULT_BOARD_LENGTH = 10;
 
@@ -238,6 +244,11 @@ public class GameBoardView extends View implements View.OnTouchListener {
         } else {
             if (!translateDown()) {
                 for (Coordinate coordinate : currentPiece.getCoordinates()) {
+                    if (coordinate.y >= DEFAULT_BOARD_HEIGHT) {
+                        //player is dead
+                        gameOver();
+                        return;
+                    }
                     usedCoordinates.add(coordinate);
                     lines.get(coordinate.y).addCoordinate(coordinate);
                 }
@@ -250,23 +261,42 @@ public class GameBoardView extends View implements View.OnTouchListener {
     private void removeCompleteLines() {
         for (int i = 0; i < lines.size(); i++) {
             Line line = lines.get(i);
-            Log.e("line", "line "+i+" has "+line.getCoordinates().size());
             if (line.isFull()) {
-                Log.e("line", "line is full "+i);
                 usedCoordinates.removeAll(line.getCoordinates());
                 line.getCoordinates().clear();
-                for (int j = i; j<lines.size(); j++){
+                for (int j = i; j < lines.size(); j++) {
                     Line lineToFill = lines.get(j);
-                    if (j < lines.size()-1){
-                        lineToFill.setCoordinates(lines.get(j+1).getCoordinates());
+                    if (j < lines.size() - 1) {
+                        lineToFill.setCoordinates(lines.get(j + 1).getCoordinates());
                     }
                 }
                 i--;
-            } else if (line.isEmpty()){
-                Log.e("line", "line is empty "+i);
+            } else if (line.isEmpty()) {
                 break;
             }
         }
         invalidate();
+    }
+
+    private void gameOver(){
+        if (listener != null){
+            listener.onGameOver();
+        }
+    }
+
+    public Listener getListener() {
+        return listener;
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    public void clear(){
+        currentPiece = null;
+        usedCoordinates.clear();
+        for (Line line : lines){
+            line.getCoordinates().clear();
+        }
     }
 }

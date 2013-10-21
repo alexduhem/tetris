@@ -7,4 +7,6 @@
     <string name="down">Down</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
+    <string name="restart">Restart</string>
+    <string name="gameover">GAME OVER !!</string>
 </resources>
