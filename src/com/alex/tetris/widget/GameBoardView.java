@@ -3,6 +3,7 @@ package com.alex.tetris.widget;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -58,7 +59,7 @@ public class GameBoardView extends View implements View.OnTouchListener {
         this.context = context;
         setOnTouchListener(this);
         usedCoordinates = new ArrayList<Coordinate>();
-        paint.setStrokeWidth(1);
+
     }
 
     @Override
@@ -74,16 +75,31 @@ public class GameBoardView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawGameBoundaries(canvas);
         if (currentPiece != null) {
-            paint.setColor(currentPiece.getColor());
-            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
+            for (Coordinate coordinate : currentPiece.getCoordinates()) {
+                drawBox(canvas, coordinate);
             }
         }
         for (Coordinate usedCoord : usedCoordinates) {
-            paint.setColor(usedCoord.getColor());
-            canvas.drawRect(getRectForCoordinate(usedCoord), paint);
+            drawBox(canvas, usedCoord);
         }
+    }
+
+    private void drawGameBoundaries(Canvas canvas){
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(0);
+        canvas.drawRect(sideMargin/2, 0, getWidth()-sideMargin/2, DEFAULT_BOARD_HEIGHT*boxSize, paint);
+    }
+
+    private void drawBox(Canvas canvas, Coordinate coordinate){
+        Rect rect = getRectForCoordinate(coordinate);
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(1);
+        canvas.drawRect(rect, paint);
+        paint.setStrokeWidth(0);
+        paint.setColor(coordinate.getColor());
+        canvas.drawRect(rect.left+1, rect.top+1, rect.right-1, rect.bottom-1,  paint);
     }
 
     private Rect getRectForCoordinate(Coordinate coordinatesInGameBoard) {
@@ -217,5 +233,9 @@ public class GameBoardView extends View implements View.OnTouchListener {
                 currentPiece = null;
             }
         }
+    }
+
+    private void removeCompleteLines(){
+
     }
 }
