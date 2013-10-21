@@ -16,7 +16,7 @@ public class GameBoardActivity extends Activity {
     Timer timer;
     Button buttonPause;
 
-    private static final int DEFAULT_SPEED = 1000;
+    private static final int DEFAULT_SPEED = 600;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,16 +50,29 @@ public class GameBoardActivity extends Activity {
     public void onButtonStartClick(View view) {
         if (pause) {
             start(DEFAULT_SPEED);
-            buttonPause.setText(getString(R.string.pause));
+
         } else {
-            timer.cancel();
-            timer = null;
-            buttonPause.setText(getString(R.string.start));
+            pause();
         }
         pause = !pause;
     }
 
+    @Override
+    protected void onPause() {
+        pause();
+        super.onPause();
+    }
+
+    private void pause() {
+        if (!pause) {
+            timer.cancel();
+            timer = null;
+            buttonPause.setText(getString(R.string.start));
+        }
+    }
+
     private void start(int speed) {
+        buttonPause.setText(getString(R.string.pause));
         if (timer == null) {
             timer = new Timer("tetrisTimer", false);
         }

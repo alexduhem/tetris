@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import com.alex.tetris.model.Coordinate;
@@ -38,11 +39,11 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     private Piece currentPiece;
 
-    ArrayList<Piece> pieces;
-
     Paint paint = new Paint();
 
     int sideMargin;
+
+    ArrayList<Coordinate> usedCoordinates;
 
     public GameBoardView(Context context) {
         this(context, null);
@@ -56,7 +57,8 @@ public class GameBoardView extends View implements View.OnTouchListener {
         super(context, attrs, defStyle);
         this.context = context;
         setOnTouchListener(this);
-        pieces = new ArrayList<Piece>();
+        usedCoordinates = new ArrayList<Coordinate>();
+        paint.setStrokeWidth(1);
     }
 
     @Override
@@ -78,11 +80,9 @@ public class GameBoardView extends View implements View.OnTouchListener {
                 canvas.drawRect(getRectForCoordinate(currentPiece.getCoordinates()[i]), paint);
             }
         }
-        for (Piece piece : pieces) {
-            paint.setColor(piece.getColor());
-            for (int i = 0; i < piece.getCoordinates().length; i++) {
-                canvas.drawRect(getRectForCoordinate(piece.getCoordinates()[i]), paint);
-            }
+        for (Coordinate usedCoord : usedCoordinates) {
+            paint.setColor(usedCoord.getColor());
+            canvas.drawRect(getRectForCoordinate(usedCoord), paint);
         }
     }
 
@@ -101,25 +101,17 @@ public class GameBoardView extends View implements View.OnTouchListener {
         return false;
     }
 
-    public boolean translationDownIsAllowed() {
-        if (currentPiece != null) {
-            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                int y = currentPiece.getCoordinates()[i].y;
-                if (y == 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
 
     public boolean translationRightIsAllowed() {
         if (currentPiece != null) {
-            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                int x = currentPiece.getCoordinates()[i].x;
-                if (x == gameBoardLength - 1) {
+            for (Coordinate coord : currentPiece.getCoordinates()) {
+                if (coord.x == gameBoardLength - 1) {
                     return false;
+                }
+                for (Coordinate existCoord : usedCoordinates) {
+                    if (existCoord.x == coord.x+1 && existCoord.y == coord.y){
+                        return false;
+                    }
                 }
             }
             return true;
@@ -129,10 +121,28 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     public boolean translationLeftIsAllowed() {
         if (currentPiece != null) {
-            for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
-                int x = currentPiece.getCoordinates()[i].x;
-                if (x == 0) {
+            for (Coordinate coord : currentPiece.getCoordinates()) {
+                if (coord.x == 0) {
                     return false;
+                }
+                for (Coordinate existCoord : usedCoordinates) {
+                    if (existCoord.x == coord.x-1 && existCoord.y == coord.y){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean translationDownIsAllowed() {
+        if (currentPiece != null && !currentPiece.isOnTheBottom()) {
+            for (Coordinate coord : currentPiece.getCoordinates()) {
+                for (Coordinate existCoord : usedCoordinates) {
+                    if (existCoord.x == coord.x && existCoord.y == coord.y - 1){
+                        return false;
+                    }
                 }
             }
             return true;
@@ -198,10 +208,12 @@ public class GameBoardView extends View implements View.OnTouchListener {
 
     public void performAction() {
         if (currentPiece == null) {
-              addNewPiece();
+            addNewPiece();
         } else {
             if (!translateDown()) {
-                pieces.add(currentPiece);
+                for (int i = 0; i < currentPiece.getCoordinates().length; i++) {
+                    usedCoordinates.add(currentPiece.getCoordinates()[i]);
+                }
                 currentPiece = null;
             }
         }

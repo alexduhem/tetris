@@ -2,6 +2,8 @@ package com.alex.tetris.model;
 
 import android.graphics.Color;
 
+import java.util.Arrays;
+
 /**
  * Created with IntelliJ IDEA.
  * User: alexandreduhem
@@ -23,43 +25,38 @@ public class Piece {
     private Coordinate[] coordinates;
     private int shape;
 
-    private static final Coordinate[] COORD_0 = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(0, 1)};
-    private static final Coordinate[] COORD_I = {new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2), new Coordinate(0, 3)};
-    private static final Coordinate[] COORD_S = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)};
-    private static final Coordinate[] COORD_Z = {new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 0), new Coordinate(2, 0)};
-    private static final Coordinate[] COORD_L = {new Coordinate(0, 2), new Coordinate(0, 1), new Coordinate(0, 0), new Coordinate(1, 0)};
-    private static final Coordinate[] COORD_J = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(1, 2)};
-    private static final Coordinate[] COORD_T = {new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(1, 1)};
-    private static final Coordinate[] COORD_NO_SHAPE = {new Coordinate(0, 0)};
 
 
     public Piece(int shape) {
         this.shape = shape;
         switch (shape) {
             case SHAPE_O:
-                coordinates = COORD_0;
+                coordinates = new Coordinate[]{new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(0, 1)};
                 break;
             case SHAPE_I:
-                coordinates = COORD_I;
+                coordinates = new Coordinate[]{new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2), new Coordinate(0, 3)};
                 break;
             case SHAPE_S:
-                coordinates = COORD_S;
+                coordinates = new Coordinate[]{new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)};
                 break;
             case SHAPE_Z:
-                coordinates = COORD_Z;
+                coordinates = new Coordinate[]{new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 0), new Coordinate(2, 0)};
                 break;
             case SHAPE_L:
-                coordinates = COORD_L;
+                coordinates = new Coordinate[]{new Coordinate(0, 2), new Coordinate(0, 1), new Coordinate(0, 0), new Coordinate(1, 0)};
                 break;
             case SHAPE_J:
-                coordinates = COORD_J;
+                coordinates = new Coordinate[]{new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(1, 2)};
                 break;
             case SHAPE_T:
-                coordinates = COORD_T;
+                coordinates = new Coordinate[]{new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(1, 1)};
                 break;
             default:
-                coordinates = COORD_NO_SHAPE;
+                coordinates = new Coordinate[]{new Coordinate(0, 0)};
                 break;
+        }
+        for (Coordinate coord : coordinates) {
+            coord.setColor(getColor());
         }
     }
 
@@ -77,6 +74,8 @@ public class Piece {
                 return Color.GREEN;
             case SHAPE_T:
                 return Color.YELLOW;
+            case SHAPE_O:
+                return Color.DKGRAY;
             default:
                 return Color.BLACK;
         }
@@ -109,15 +108,16 @@ public class Piece {
 
     /**
      * Translate the shape to the given coordinate (with the rotation center point)
+     *
      * @param coordinate
      */
-    public void translate(Coordinate coordinate){
+    public void translate(Coordinate coordinate) {
         Coordinate centerCoordinatesForRotation = coordinates[getRotationCoordinateIndex()];
-        int distanceX = coordinate.x - centerCoordinatesForRotation.x  ;
-        int distanceY = coordinate.y - centerCoordinatesForRotation.y  ;
-         for (int i = 0; i<coordinates.length; i++){
-             coordinates[i].x =  coordinates[i].x + distanceX;
-             coordinates[i].y =  coordinates[i].y + distanceY;
+        int distanceX = coordinate.x - centerCoordinatesForRotation.x;
+        int distanceY = coordinate.y - centerCoordinatesForRotation.y;
+        for (int i = 0; i < coordinates.length; i++) {
+            coordinates[i].x = coordinates[i].x + distanceX;
+            coordinates[i].y = coordinates[i].y + distanceY;
         }
     }
 
@@ -127,7 +127,7 @@ public class Piece {
         for (int i = 0; i < coordinates.length; i++) {
             int newX = coordinates[i].x - centerCoordinatesForRotation.x;
             int newY = coordinates[i].y - centerCoordinatesForRotation.y;
-            coordinatesToReturn[i] = new Coordinate(newY + centerCoordinatesForRotation.x, -newX + centerCoordinatesForRotation.y) ;
+            coordinatesToReturn[i] = new Coordinate(newY + centerCoordinatesForRotation.x, -newX + centerCoordinatesForRotation.y);
         }
         return coordinatesToReturn;
     }
@@ -143,4 +143,14 @@ public class Piece {
     public int getShape() {
         return shape;
     }
+
+    public boolean isOnTheBottom() {
+        for (int i = 0; i < coordinates.length; i++) {
+            if (coordinates[i].y == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

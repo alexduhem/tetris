@@ -1,5 +1,7 @@
 package com.alex.tetris.model;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Created with IntelliJ IDEA.
  * User: alexandreduhem
@@ -10,6 +12,7 @@ package com.alex.tetris.model;
 public class Coordinate {
     public int x;
     public int y;
+    public int color;
 
     public Coordinate(int x, int y) {
         this.x = x;
@@ -31,4 +34,14 @@ public class Coordinate {
     public void setY(int y) {
         this.y = y;
     }
+
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
 }
