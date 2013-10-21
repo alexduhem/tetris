@@ -85,6 +85,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
             timer.cancel();
             timer = null;
             buttonPause.setText(getString(R.string.start));
+            gameBoardView.setTouchable(false);
         }
         pause = true;
     }
@@ -106,6 +107,7 @@ public class GameBoardActivity extends Activity implements GameBoardView.Listene
             }
         }, 0, speed);
         pause = false;
+        gameBoardView.setTouchable(true);
     }
 
     @Override

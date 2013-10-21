@@ -53,6 +53,8 @@ public class GameBoardView extends View {
 
     int sideMargin;
 
+    boolean touchable;
+
     ArrayList<Coordinate> usedCoordinates;
 
     GestureDetector gestureDetector;
@@ -81,6 +83,7 @@ public class GameBoardView extends View {
         for (int i = 0; i < Params.DEFAULT_BOARD_HEIGHT; i++) {
             lines.add(new Line(i, Params.DEFAULT_BOARD_LENGTH));
         }
+        touchable = true;
     }
 
     @Override
@@ -95,6 +98,9 @@ public class GameBoardView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!touchable){
+            return false;
+        }
         return gestureDetector.onTouchEvent(event);
     }
 
@@ -309,5 +315,13 @@ public class GameBoardView extends View {
 
     public int getBoxSize() {
         return boxSize;
+    }
+
+    public boolean isTouchable() {
+        return touchable;
+    }
+
+    public void setTouchable(boolean touchable) {
+        this.touchable = touchable;
     }
 }
